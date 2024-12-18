@@ -1,5 +1,6 @@
 // src/components/VideoPlayer.js
 import React from "react";
+import ReactPlayer from 'react-player';
 import styled from "styled-components";
 
 const PlayerWrapper = styled.div`
@@ -17,17 +18,18 @@ const VideoFrame = styled.iframe`
 function VideoPlayer({ video }) {
   if (!video) return <div>Loading...</div>;
 
-  const videoId = video.id?.videoId || video.id;
+  const videoId = video.url.split('=')[1];
   const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
   return (
     <PlayerWrapper>
       <h1>{video.title || "Video"}</h1>
-      <VideoFrame
+      {/* <VideoFrame
         src={embedUrl}
         title={video.title}
         allowFullScreen
-      ></VideoFrame>
+      ></VideoFrame> */}
+      <ReactPlayer url={video.url} controls muted loop playsinline playing onReady={(player) => player.seekTo(0, 'seconds')} />
     </PlayerWrapper>
   );
 }
