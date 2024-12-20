@@ -1,8 +1,8 @@
-// src/components/VideoList.js
 import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
+// Styled components
 const VideoItem = styled(Link)`
   display: flex;
   align-items: center;
@@ -37,24 +37,83 @@ const VideoTitle = styled.div`
   margin-bottom: 5px;
 `;
 
-function VideoList({ videos }) {
-  if (!Array.isArray(videos)) return <div>No videos available</div>;
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const ActionButton = styled.button`
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #fff;
+
+  ${({ $variant }) =>
+    $variant === "add"
+      ? `
+    background-color: #007BFF;
+    &:hover {
+      background-color: #0056b3;
+    }
+  `
+      : `
+    background-color: #DC3545;
+    &:hover {
+      background-color: #a71d2a;
+    }
+  `}
+`;
+
+function VideoList({ videos, onAddVideo, onRemoveVideo, onVideoClick }) {
+  if (!videos || videos.length === 0) {
+    return <p>No videos to display.</p>;
+  }
 
   return (
     <div>
       {videos.map((video, index) => {
-        const videoId = video.id?.videoId || video.id;
+        
+        const uniqueKey = video?.id?.videoId || `${video.title}-${index}`;
+        console.log(video)
         return (
-          <VideoItem key={videoId || index} to={`/video/${videoId}`}>
-            {video.thumbnails?.url ? (
-              <Thumbnail src={video.thumbnails.url} alt={video.title} />
-            ) : (
-              <div style={{ width: "120px", height: "80px", background: "#ccc" }} />
-            )}
+          <VideoItem
+            to={`/video/${video?.id?.videoId}`}
+            key={uniqueKey} 
+            onClick={(e) => {
+              if (onVideoClick) {
+                e.preventDefault(); 
+                onVideoClick(video.id.videoId); 
+              }
+            }}
+          >
+            <Thumbnail src={video.thumbnails?.url} alt={video.title} />
             <VideoDetails>
-              <VideoTitle>{video.title || "No Title"}</VideoTitle>
-              <span>Duration: {video.duration_raw || "N/A"}</span>
-              <span>Channel: {video.channelName || "Unknown"}</span>
+              <VideoTitle>{video.title}</VideoTitle>
+              <ButtonContainer>
+                {onAddVideo && (
+                  <ActionButton
+                    $variant="add"
+                    onClick={(e) => {
+                      e.preventDefault(); 
+                      onAddVideo(video);
+                    }}
+                  >
+                    Add to Playlist
+                  </ActionButton>
+                )}
+                {onRemoveVideo && (
+                  <ActionButton
+                    $variant="remove"
+                    onClick={(e) => {
+                      e.preventDefault(); 
+                      onRemoveVideo(video.id);
+                    }}
+                  >
+                    Remove
+                  </ActionButton>
+                )}
+              </ButtonContainer>
             </VideoDetails>
           </VideoItem>
         );

@@ -1,10 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client"; // Import createRoot
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import "./index.css";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+// Select the root element
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement); // Create a root
+
 root.render(
   <React.StrictMode>
     <BrowserRouter>
@@ -12,3 +14,8 @@ root.render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+
+
+
+
